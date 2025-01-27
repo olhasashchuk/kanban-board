@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-container>
-      <v-btn color="primary" @click="showForm = !showForm">
+      <v-btn color="primary" @click="openAddForm">
         Add card
       </v-btn>
         <v-row>
@@ -13,44 +13,47 @@
               :key="card.id"
               :title="card.title"
               :description="card.description"
-              @edit="editCard(card)"
+              @edit="openEditForm(card)"
             />
           </div>
         </v-col>
       </v-row>
-      
 
-       <v-dialog v-model="showForm" max-width="500px" >
-        <v-card
-        title="Add/edit card"
-      >
-        
-          <template #default v-slot:actions>
+      <v-dialog v-model="showAddForm" max-width="500px" >
+        <v-card title="Add a new card">
           <AddCardForm
             :statuses="statuses"
             :addCard="addCard"
-            :editedCard="editedCard"
-            :saveEdit="saveEdit"
-            @close="showForm = false"
+            @close="showAddForm = false"
           />
-        </template>
-      </v-card>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="showEditForm" max-width="500px" >
+        <v-card title="Edit card">
+          <EditCardForm
+            :statuses="statuses"
+            :card="editedCard!"
+            :saveEdit="saveEdit"
+            @close="showEditForm = false"
+          />
+        </v-card>
       </v-dialog>
     </v-container>
   </v-app>
   
 </template>
 
-
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import KanbanCard from './components/KanbanCard.vue';
 import AddCardForm from './components/AddCardForm.vue';
+import EditCardForm from './components/EditCardForm.vue';
 import type { Status, Card } from './types';
 
 export default defineComponent({
   name: 'App',
-  components: { KanbanCard, AddCardForm },
+  components: { KanbanCard, AddCardForm, EditCardForm },
   setup() {
     const statuses = ref<Status[]>([
       { id: 1, title: 'Backlog' },
@@ -68,7 +71,36 @@ export default defineComponent({
       { id: 4, title: 'Task 4', description: 'Description for Task 4', status: 'In Development' },
     ]);
 
-     const saveToLocalStorage = () => {
+    const showAddForm = ref(false);
+    const showEditForm = ref(false);
+    const editedCard = ref<Card | null>(null);
+  
+    const addCard = (card: Card) => {
+      card.id = Date.now();
+      cards.value.push(card);
+      saveToLocalStorage();
+      showAddForm.value = false;
+    };
+
+    const openAddForm = () => {
+      showAddForm.value = true;
+    };
+
+    const openEditForm = (card: Card) => {
+      editedCard.value = { ...card };
+      showEditForm.value = true;
+    };
+
+    const saveEdit = (card: Card) => {
+      const cardIndex = cards.value.findIndex((c) => c.id === card.id);
+      if (cardIndex !== -1) {
+        cards.value[cardIndex] = { ...card };
+        saveToLocalStorage();
+      }
+      showEditForm.value = false;
+    };
+
+    const saveToLocalStorage = () => {
       localStorage.setItem('kanbanCards', JSON.stringify(cards.value));
     };
 
@@ -79,37 +111,19 @@ export default defineComponent({
       }
     };
 
-    const showForm = ref(false);
-
-    const addCard = (card: Card) => {
-      card.id = Date.now();
-      cards.value.push(card);
-      saveToLocalStorage();
-      showForm.value = false;
-    };
-
-    const editedCard = ref<Card | null>(null);
-
-    const editCard = (card: Card) => {
-      editedCard.value = { ...card };
-      
-      showForm.value = true;
-    };
-
-    const saveEdit = () => {
-      if (editedCard.value) {
-        const cardIndex = cards.value.findIndex((card) => card.id === editedCard.value?.id);
-        if (cardIndex !== -1) {
-          cards.value[cardIndex] = { ...editedCard.value };
-          saveToLocalStorage();
-        }
-        showForm.value = false;
-      }
-    };
-
     onMounted(loadFromLocalStorage);
 
-    return { statuses, cards, editedCard, addCard, editCard, saveEdit, showForm };
+    return { 
+      statuses,
+      cards,
+      showAddForm,
+      showEditForm,
+      editedCard,
+      addCard,
+      openAddForm,
+      openEditForm,
+      saveEdit
+    };
   },
 });
 </script>
@@ -124,6 +138,4 @@ export default defineComponent({
   flex-direction: column;
   gap: 8px;
 }
-
-
 </style>

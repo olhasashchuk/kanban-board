@@ -1,7 +1,8 @@
 <template>
   <CardForm
     :statuses="statuses"
-    :onSubmit="addCard"
+    :card="card"
+    :onSubmit="saveEdit"
     @close="$emit('close')"
   />
 </template>
@@ -13,14 +14,18 @@ import CardForm from './CardForm.vue';
 import type { Status, Card } from '../types';
 
 export default defineComponent({
-  name: 'AddCardForm',
+  name: 'EditCardForm',
   components: { CardForm },
   props: {
     statuses: {
       type: Array as () => Status[],
       required: true,
     },
-    addCard: {
+    card: {
+      type: Object as () => Card,
+      required: true,
+    },
+    saveEdit: {
       type: Function as PropType<(card: Card) => void>,
       required: true,
     },
