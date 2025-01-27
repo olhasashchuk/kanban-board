@@ -14,6 +14,7 @@
               :title="card.title"
               :description="card.description"
               @edit="openEditForm(card)"
+              @delete="openDeleteForm(card)"
             />
           </div>
         </v-col>
@@ -39,6 +40,15 @@
           />
         </v-card>
       </v-dialog>
+
+      <v-dialog v-model="showDeleteConfirm" max-width="500px" >
+          <DeleteCardConfirm
+            :onDelete="deleteCard"
+            :card="editedCard"
+            @close="showDeleteConfirm = false"
+          />
+      </v-dialog>
+
     </v-container>
   </v-app>
   
@@ -50,10 +60,16 @@ import KanbanCard from './components/KanbanCard.vue';
 import AddCardForm from './components/AddCardForm.vue';
 import EditCardForm from './components/EditCardForm.vue';
 import type { Status, Card } from './types';
+import DeleteCardConfirm from './components/DeleteCardConfirm.vue';
 
 export default defineComponent({
   name: 'App',
-  components: { KanbanCard, AddCardForm, EditCardForm },
+  components: { 
+    KanbanCard, 
+    AddCardForm, 
+    EditCardForm,
+    DeleteCardConfirm
+  },
   setup() {
     const statuses = ref<Status[]>([
       { id: 1, title: 'Backlog' },
@@ -73,6 +89,7 @@ export default defineComponent({
 
     const showAddForm = ref(false);
     const showEditForm = ref(false);
+    const showDeleteConfirm = ref(false);
     const editedCard = ref<Card | null>(null);
   
     const addCard = (card: Card) => {
@@ -91,6 +108,11 @@ export default defineComponent({
       showEditForm.value = true;
     };
 
+    const openDeleteForm = (card: Card) => {
+      editedCard.value = { ...card };
+      showDeleteConfirm.value = true;
+    };
+
     const saveEdit = (card: Card) => {
       const cardIndex = cards.value.findIndex((c) => c.id === card.id);
       if (cardIndex !== -1) {
@@ -98,6 +120,15 @@ export default defineComponent({
         saveToLocalStorage();
       }
       showEditForm.value = false;
+    };
+
+    const deleteCard = (card: Card) => {
+      const cardIndex = cards.value.findIndex((c) => c.id === card.id);
+      if (cardIndex !== -1) {
+        cards.value.splice(cardIndex, 1);
+        saveToLocalStorage();
+      }
+      showDeleteConfirm.value = false;
     };
 
     const saveToLocalStorage = () => {
@@ -119,10 +150,13 @@ export default defineComponent({
       showAddForm,
       showEditForm,
       editedCard,
+      showDeleteConfirm,
       addCard,
       openAddForm,
       openEditForm,
-      saveEdit
+      saveEdit,
+      openDeleteForm,
+      deleteCard,
     };
   },
 });
