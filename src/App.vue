@@ -7,15 +7,27 @@
         <v-row>
         <v-col v-for="status in statuses" :key="status.id" cols="2" >
           <h3>{{ status.title }}</h3>
-          <div class="kanban-column h-screen">
-            <KanbanCard
-              v-for="card in cards.filter(c => c.status === status.title)"
+                   
+          <div 
+            class="kanban-column"
+            @dragover.prevent
+            @drop="onDrop(status)"
+          >
+            <div
+              class="kanban-card"
+              v-for="card in filteredCards(status)"
               :key="card.id"
-              :title="card.title"
-              :description="card.description"
-              @edit="openEditForm(card)"
-              @delete="openDeleteForm(card)"
-            />
+              draggable="true"
+              @dragstart="onDragStart(card)"
+              @dragend="onDragEnd"
+            >
+              <KanbanCard
+                :title="card.title"
+                :description="card.description"
+                @edit="openEditForm(card)"
+                @delete="openDeleteForm(card)"
+              />
+            </div>
           </div>
         </v-col>
       </v-row>
@@ -68,16 +80,16 @@ export default defineComponent({
     KanbanCard, 
     AddCardForm, 
     EditCardForm,
-    DeleteCardConfirm
+    DeleteCardConfirm,
   },
   setup() {
     const statuses = ref<Status[]>([
-      { id: 1, title: 'Backlog' },
-      { id: 2, title: 'Selected' },
-      { id: 3, title: 'To Specify' },
-      { id: 4, title: 'In Development' },
-      { id: 5, title: 'To test' },
-      { id: 6, title: 'To deploy in production' },
+      { id: 1, title: 'Backlog', cards: [] },
+      { id: 2, title: 'Selected', cards: [] },
+      { id: 3, title: 'To Specify', cards: [] },
+      { id: 4, title: 'In Development', cards: [] },
+      { id: 5, title: 'To test', cards: [] },
+      { id: 6, title: 'To deploy in production', cards: [] },
     ]);
 
     const cards = ref<Card[]>([
@@ -91,6 +103,7 @@ export default defineComponent({
     const showEditForm = ref(false);
     const showDeleteConfirm = ref(false);
     const editedCard = ref<Card | null>(null);
+      let draggedCard = ref<Card | null>(null);
   
     const addCard = (card: Card) => {
       card.id = Date.now();
@@ -131,6 +144,32 @@ export default defineComponent({
       showDeleteConfirm.value = false;
     };
 
+    const onDragStart = (card: Card) => {
+      draggedCard.value = card;
+    };
+
+    const onDragEnd = () => {
+      draggedCard.value = null;
+    };
+
+    const onDrop = (status: Status) => {
+      if (draggedCard.value) {
+        const updatedCards = cards.value.map((card) => {
+          if (draggedCard.value && card.id === draggedCard.value.id) {
+            return { ...card, status: status.title };
+          }
+          return card;
+        });
+
+        cards.value = updatedCards;
+        saveToLocalStorage();
+      }
+    };
+    
+    const filteredCards = (status: Status) => {
+      return cards.value.filter(card => card.status === status.title);
+    };
+
     const saveToLocalStorage = () => {
       localStorage.setItem('kanbanCards', JSON.stringify(cards.value));
     };
@@ -157,6 +196,10 @@ export default defineComponent({
       saveEdit,
       openDeleteForm,
       deleteCard,
+      onDragStart,
+      onDragEnd,
+      onDrop,
+      filteredCards
     };
   },
 });
@@ -164,12 +207,13 @@ export default defineComponent({
 
 <style scoped>
 .kanban-column {
+  min-height: 500px;
   background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  padding: 10px;
   border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  padding: 10px;
+}
+
+.kanban-card.dragging {
+  opacity: 0.5;
 }
 </style>
