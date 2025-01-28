@@ -21,8 +21,10 @@
       label="Description"
       required
     />
-    <v-btn type="submit" color="primary">Save</v-btn>
-    <v-btn @click="$emit('close')" color="secondary">Cancel</v-btn>
+    <div class="ga-2 pa-0 d-flex flex-row align-start justify-end">
+      <v-btn type="submit" color="primary">Save</v-btn>
+      <v-btn @click="$emit('close')" color="secondary">Cancel</v-btn>
+    </div>
   </v-form>
 </template>
 

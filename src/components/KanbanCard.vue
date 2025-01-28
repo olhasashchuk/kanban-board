@@ -1,17 +1,16 @@
 <template>
   <v-card class="kanban-card">
-    <v-card-actions>
-      <v-btn icon @click="$emit('edit')" color="primary">
-        <v-icon>mdi-pencil</v-icon>
-      </v-btn>
-      <v-btn icon @click="$emit('delete')" color="error">
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
-    </v-card-actions>
-    <v-card-title>{{ title }}</v-card-title>
-    <v-card-text>{{ description }}</v-card-text>
-    
-  </v-card>
+    <v-card-title class="text-wrap title-flex">{{ title }}</v-card-title>
+    <v-card-text class="text-wrap">{{ description }}</v-card-text>
+      <v-card-actions class="ga-0 pa-0 d-flex flex-row align-start justify-end">
+        <v-btn icon small style="width: 32px; height: 32px;" @click="$emit('edit')" color="primary">
+          <v-icon size="small">mdi-pencil</v-icon>
+        </v-btn>
+        <v-btn icon small style="width: 32px; height: 32px;" @click="$emit('delete')" color="error">
+          <v-icon size="small">mdi-delete</v-icon>
+        </v-btn>
+      </v-card-actions>
+    </v-card>
 </template>
 
 <script lang="ts">
@@ -42,4 +41,18 @@ export default defineComponent({
   border-radius: 8px;
 }
 
+
+
+.title-flex {
+  flex: 1;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.text-wrap {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
 </style>
