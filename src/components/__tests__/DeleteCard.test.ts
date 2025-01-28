@@ -8,7 +8,12 @@ describe('DeleteCardConfirm', () => {
 
     const wrapper = mount(DeleteCardConfirm, {
       props: {
-        card: { id: 1, title: 'Task 1', description: 'Description for Task 1', status: 'Backlog' },
+        card: {
+          id: '1',
+          title: 'Task 1',
+          description: 'Description for Task 1',
+          status: 'Backlog',
+        },
         onDelete: deleteCardMock,
       },
     })
@@ -28,7 +33,12 @@ describe('DeleteCardConfirm', () => {
     const closeMock = vi.fn()
     const wrapper = mount(DeleteCardConfirm, {
       props: {
-        card: { id: 1, title: 'Task 1', description: 'Description for Task 1', status: 'Backlog' },
+        card: {
+          id: '1',
+          title: 'Task 1',
+          description: 'Description for Task 1',
+          status: 'Backlog',
+        },
         onDelete: vi.fn(),
       },
     })

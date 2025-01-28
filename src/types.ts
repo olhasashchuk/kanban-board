@@ -5,7 +5,7 @@ export interface Status {
 }
 
 export interface Card {
-  id: number
+  id: string
   title: string
   description: string
   status: string

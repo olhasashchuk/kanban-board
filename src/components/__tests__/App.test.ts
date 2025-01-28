@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, it, expect, vi } from 'vitest'
 import type { Card } from '../../types'
 import App from '../../App.vue'
+import { v4 as uuidv4 } from 'uuid'
 
 /**
  * Test Suite for App.vue
@@ -25,7 +26,7 @@ describe('App.vue', () => {
     await wrapper.vm.$nextTick()
 
     const cardData: Card = {
-      id: Date.now(),
+      id: uuidv4(),
       title: 'New Task',
       description: 'Task description',
       status: 'Backlog',
