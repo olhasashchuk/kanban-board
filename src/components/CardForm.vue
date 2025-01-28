@@ -52,7 +52,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const formRef = ref()
     const formCard = ref<Card>({
-      id: props.card?.id || 0,
+      id: props.card?.id || '',
       title: props.card?.title || '',
       description: props.card?.description || '',
       status: props.card?.status || props.statuses[0].title,

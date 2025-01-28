@@ -69,6 +69,7 @@ import AddCardForm from './components/AddCardForm.vue'
 import EditCardForm from './components/EditCardForm.vue'
 import type { Status, Card } from './types'
 import DeleteCardConfirm from './components/DeleteCardConfirm.vue'
+import { v4 as uuidv4 } from 'uuid'
 
 export default defineComponent({
   name: 'App',
@@ -89,10 +90,10 @@ export default defineComponent({
     ])
 
     const cards = ref<Card[]>([
-      { id: 1, title: 'Task 1', description: 'Description for Task 1', status: 'Backlog' },
-      { id: 2, title: 'Task 2', description: 'Description for Task 2', status: 'Selected' },
-      { id: 3, title: 'Task 3', description: 'Description for Task 3', status: 'To test' },
-      { id: 4, title: 'Task 4', description: 'Description for Task 4', status: 'In development' },
+      { id: '1', title: 'Task 1', description: 'Description for Task 1', status: 'Backlog' },
+      { id: '2', title: 'Task 2', description: 'Description for Task 2', status: 'Selected' },
+      { id: '3', title: 'Task 3', description: 'Description for Task 3', status: 'To test' },
+      { id: '4', title: 'Task 4', description: 'Description for Task 4', status: 'In development' },
     ])
 
     const showAddForm = ref(false)
@@ -102,7 +103,7 @@ export default defineComponent({
     const draggedCard = ref<Card | null>(null)
 
     const addCard = (card: Card) => {
-      card.id = Date.now()
+      card.id = uuidv4()
       cards.value.push(card)
       saveToLocalStorage()
       showAddForm.value = false
