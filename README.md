@@ -1,6 +1,8 @@
 # Kanban Board
 
 A simple Kanban board application built with Vue 3 and Vuetify, designed for task management. This app allows you to create, edit, delete, and drag-and-drop task cards across different status columns.
+![Screenshot_2](https://github.com/user-attachments/assets/4f7ac8e8-7ccc-424d-af92-f88d5bf8142a)
+
 
 ## Features
 
