@@ -2,7 +2,7 @@
   <v-form ref="formRef" @submit.prevent="submitForm" class="pa-4">
     <v-text-field
       v-model="formCard.title"
-      :rules="[(value) => !!value || 'Title is required.']"
+      :rules="[(value: string) => !!value || 'Title is required.']"
       label="Title"
       required
     />
@@ -11,13 +11,13 @@
       :items="statuses"
       item-text="status"
       item-value="status"
-      :rules="[(value) => !!value || 'Status is required.']"
+      :rules="[(value: string) => !!value || 'Status is required.']"
       label="Status"
       required
     />
     <v-textarea
       v-model="formCard.description"
-      :rules="[(value) => !!value || 'Description is required.']"
+      :rules="[(value: string) => !!value || 'Description is required.']"
       label="Description"
       required
     />
